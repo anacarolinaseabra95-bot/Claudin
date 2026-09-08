@@ -6,9 +6,9 @@ export default function DirectiveSummary({ resumo }: { resumo: ResumoDiretivo })
   const { candidatoPrincipal, candidatoSecundario, temaForte, temaAtencao, diferencaPontos } = resumo;
 
   return (
-    <div className="rounded-2xl border border-indigo-200 bg-indigo-50/60 p-5 dark:border-indigo-900 dark:bg-indigo-950/30">
+    <div className="rounded-2xl border-2 border-fuchsia-200 bg-fuchsia-50/60 p-5 dark:border-fuchsia-900 dark:bg-fuchsia-950/30">
       <p className="text-sm leading-relaxed text-slate-800 dark:text-slate-100">
-        Seu maior match é{" "}
+        🎉 Seu maior match é{" "}
         <Link href={`/candidato/${candidatoPrincipal.candidato.id}`} className="font-bold underline underline-offset-2">
           {candidatoPrincipal.candidato.nome_urna}
         </Link>{" "}

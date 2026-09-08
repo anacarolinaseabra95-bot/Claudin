@@ -36,7 +36,7 @@ export default function ProposalCard({
         <button
           type="button"
           onClick={() => setAberto((a) => !a)}
-          className="text-xs font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
+          className="text-xs font-semibold text-fuchsia-600 hover:underline dark:text-fuchsia-400"
         >
           {aberto ? "Ver menos" : "Ver detalhe completo"}
         </button>

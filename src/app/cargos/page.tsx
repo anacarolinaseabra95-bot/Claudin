@@ -6,18 +6,18 @@ import { CARGO_LABEL } from "@/lib/labels";
 import { useStore } from "@/lib/store";
 import { Cargo } from "@/lib/types";
 
-const OPCOES: { cargo: Cargo; descricao: string; disponivel: boolean }[] = [
-  { cargo: "presidente", descricao: "13 candidaturas registradas no TSE", disponivel: true },
-  { cargo: "governador", descricao: "7 candidaturas para o governo de SP", disponivel: true },
+const OPCOES: { cargo: Cargo; emoji: string; descricao: string }[] = [
+  { cargo: "presidente", emoji: "🇧🇷", descricao: "13 candidaturas registradas no TSE" },
+  { cargo: "governador", emoji: "🏙️", descricao: "7 candidaturas para o governo de SP" },
   {
     cargo: "deputado_federal",
-    descricao: "Base curada em construção — busca assistida pelo TSE",
-    disponivel: true,
+    emoji: "🏛️",
+    descricao: "Ainda não temos todos os nomes — mas te ajudamos a achar o partido certo pra você",
   },
   {
     cargo: "deputado_estadual",
-    descricao: "Base curada em construção — busca assistida pelo TSE",
-    disponivel: true,
+    emoji: "🏢",
+    descricao: "Ainda não temos todos os nomes — mas te ajudamos a achar o partido certo pra você",
   },
 ];
 
@@ -34,16 +34,19 @@ export default function CargosPage() {
 
   function continuar() {
     setCargos(selecionados);
-    router.push("/questionario");
+    router.push("/temas");
   }
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col px-6 py-12">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+      <p className="text-4xl" aria-hidden="true">
+        🗳️
+      </p>
+      <h1 className="mt-3 text-2xl font-bold text-slate-900 dark:text-white">
         Quais eleições você quer decidir agora?
       </h1>
       <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-        Você pode escolher mais de uma. O mesmo questionário de prioridades vale para todas.
+        Pode escolher mais de uma — as mesmas respostas valem pra todas. 👇
       </p>
 
       <div className="mt-8 flex flex-col gap-3">
@@ -55,14 +58,17 @@ export default function CargosPage() {
               type="button"
               onClick={() => alternar(op.cargo)}
               aria-pressed={ativo}
-              className={`flex items-start justify-between gap-3 rounded-2xl border px-5 py-4 text-left transition ${
+              className={`flex items-start gap-3 rounded-2xl border-2 px-5 py-4 text-left transition ${
                 ativo
-                  ? "border-indigo-600 bg-indigo-50 dark:bg-indigo-950/40"
+                  ? "border-fuchsia-500 bg-fuchsia-50 shadow-sm dark:bg-fuchsia-950/30"
                   : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900"
               }`}
             >
-              <span>
-                <span className="block font-semibold text-slate-900 dark:text-white">
+              <span className="text-2xl" aria-hidden="true">
+                {op.emoji}
+              </span>
+              <span className="flex-1">
+                <span className="block font-bold text-slate-900 dark:text-white">
                   {CARGO_LABEL[op.cargo]}
                 </span>
                 <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-400">
@@ -71,8 +77,8 @@ export default function CargosPage() {
               </span>
               <span
                 aria-hidden="true"
-                className={`mt-0.5 h-5 w-5 flex-shrink-0 rounded-full border-2 ${
-                  ativo ? "border-indigo-600 bg-indigo-600" : "border-slate-300 dark:border-slate-600"
+                className={`mt-1 h-5 w-5 flex-shrink-0 rounded-full border-2 ${
+                  ativo ? "border-fuchsia-500 bg-fuchsia-500" : "border-slate-300 dark:border-slate-600"
                 }`}
               />
             </button>
@@ -84,9 +90,9 @@ export default function CargosPage() {
         type="button"
         disabled={selecionados.length === 0}
         onClick={continuar}
-        className="mt-10 inline-flex items-center justify-center rounded-full bg-indigo-600 px-8 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
+        className="mt-10 inline-flex items-center justify-center rounded-full bg-fuchsia-600 px-8 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-fuchsia-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
       >
-        Continuar
+        Continuar 🚀
       </button>
     </main>
   );

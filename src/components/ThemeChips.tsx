@@ -22,7 +22,7 @@ export default function ThemeChips({
             aria-pressed={ativo}
             className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
               ativo
-                ? "border-indigo-600 bg-indigo-600 text-white"
+                ? "border-fuchsia-600 bg-fuchsia-600 text-white"
                 : "border-slate-300 bg-white text-slate-600 hover:border-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
             }`}
           >

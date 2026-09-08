@@ -94,19 +94,41 @@ export interface Candidato {
 
 /** ---------- Questionário ---------- */
 
-export type RespostaEscala = -2 | -1 | 0 | 1 | 2 | null; // null = "não tenho opinião formada"
+/** -2 = opção A, 0 = "os dois, mais ou menos", 2 = opção B, null = "não sei / tanto faz" */
+export type RespostaEscala = -2 | -1 | 0 | 1 | 2 | null;
+
+export interface OpcaoQuestao {
+  emoji: string;
+  texto: string;
+}
 
 export interface Questao {
   id: string;
   eixo: Eixo;
-  /** true = concordar aproxima do polo "max" do eixo; false = concordar aproxima do polo "min" */
-  direcaoMax: boolean;
-  texto: string;
-  poloMin: string;
-  poloMax: string;
+  pergunta: string;
+  /** Sempre representa o polo -2 (mínimo) do eixo */
+  opcaoA: OpcaoQuestao;
+  /** Sempre representa o polo +2 (máximo) do eixo */
+  opcaoB: OpcaoQuestao;
 }
 
 export type NivelImportancia = "pouco" | "medio" | "muito";
+
+/** Mapa de qual(is) eixo(s) ideológico(s) as perguntas simples cobrem quando o
+ * usuário escolhe um tema — permite perguntar pouco e ainda cruzar com temas
+ * "qualitativos" (sem eixo próprio, como saúde) via um eixo correlato. */
+export const TEMA_PARA_EIXOS: Partial<Record<Tema, Eixo[]>> = {
+  economia: ["economia"],
+  saude: ["economia"],
+  educacao: ["economia"],
+  seguranca: ["seguranca"],
+  costumes: ["costumes"],
+  direitos_humanos: ["costumes"],
+  meio_ambiente: ["meio_ambiente"],
+  infraestrutura: ["meio_ambiente"],
+  protecao_animal: ["meio_ambiente"],
+  gestao_publica: ["instituicoes"],
+};
 
 export const TEMAS_IMPORTANCIA: Tema[] = [
   "economia",
@@ -131,10 +153,24 @@ export interface AvaliacaoItem {
 
 export interface UserState {
   cargosSelecionados: Cargo[];
+  /** Temas escolhidos pelo usuário, na ordem em que tocou (1º = mais importante). */
+  temasEscolhidos: Tema[];
   respostas: Record<string, RespostaEscala>;
   importancias: Partial<Record<Tema, NivelImportancia>>;
   avaliacoesPessoais: Record<string, AvaliacaoItem[]>; // candidatoId -> avaliações
   questionarioConcluido: boolean;
+}
+
+/** ---------- Partidos (para dar sempre um resultado, especialmente em Deputado) ---------- */
+
+export interface Partido {
+  sigla: string;
+  nome: string;
+  numero: string;
+  descricao: string; // 1-2 frases, linguagem simples, sem jargão
+  posicao_eixos: PosicaoEixos;
+  forca_sp?: string; // contexto sobre representação do partido em SP, se disponível
+  fonte?: string;
 }
 
 /** ---------- Resultado do matching ---------- */
@@ -146,6 +182,12 @@ export interface AfinidadeTema {
 
 export interface ResultadoCandidato {
   candidato: Candidato;
+  afinidadeGeral: number; // 0-100
+  porEixo: { eixo: Eixo; afinidade: number; tema: Tema }[];
+}
+
+export interface ResultadoPartido {
+  partido: Partido;
   afinidadeGeral: number; // 0-100
   porEixo: { eixo: Eixo; afinidade: number; tema: Tema }[];
 }

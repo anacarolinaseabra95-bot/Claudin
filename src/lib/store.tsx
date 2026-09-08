@@ -22,6 +22,7 @@ const STORAGE_KEY = "bussola-eleitoral-sp-2026:estado";
 
 const ESTADO_INICIAL: UserState = {
   cargosSelecionados: [],
+  temasEscolhidos: [],
   respostas: {},
   importancias: {},
   avaliacoesPessoais: {},
@@ -43,6 +44,7 @@ interface StoreContextValue {
   estado: UserState;
   hidratado: boolean;
   setCargos: (cargos: Cargo[]) => void;
+  alternarTema: (tema: Tema) => void;
   responder: (questaoId: string, resposta: RespostaEscala) => void;
   setImportancia: (tema: Tema, nivel: NivelImportancia) => void;
   concluirQuestionario: () => void;
@@ -82,6 +84,26 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setEstado((e) => ({ ...e, importancias: { ...e.importancias, [tema]: nivel } }));
   }, []);
 
+  /**
+   * Liga/desliga um tema na lista de causas escolhidas pelo usuário e
+   * recalcula a importância de cada uma a partir da ordem em que foram
+   * tocadas: as 2 primeiras contam como "muito importante", as demais como
+   * "médio". Isso substitui a antiga tela separada de importância por tema.
+   */
+  const alternarTema = useCallback((tema: Tema) => {
+    setEstado((e) => {
+      const jaEscolhido = e.temasEscolhidos.includes(tema);
+      const novaLista = jaEscolhido
+        ? e.temasEscolhidos.filter((t) => t !== tema)
+        : [...e.temasEscolhidos, tema];
+      const novasImportancias: UserState["importancias"] = {};
+      novaLista.forEach((t, i) => {
+        novasImportancias[t] = i < 2 ? "muito" : "medio";
+      });
+      return { ...e, temasEscolhidos: novaLista, importancias: novasImportancias };
+    });
+  }, []);
+
   const concluirQuestionario = useCallback(() => {
     setEstado((e) => ({ ...e, questionarioConcluido: true }));
   }, []);
@@ -118,6 +140,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       estado,
       hidratado,
       setCargos,
+      alternarTema,
       responder,
       setImportancia,
       concluirQuestionario,
@@ -125,7 +148,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       avaliacaoDoItem,
       resetar,
     }),
-    [estado, hidratado, setCargos, responder, setImportancia, concluirQuestionario, avaliarItem, avaliacaoDoItem, resetar]
+    [
+      estado,
+      hidratado,
+      setCargos,
+      alternarTema,
+      responder,
+      setImportancia,
+      concluirQuestionario,
+      avaliarItem,
+      avaliacaoDoItem,
+      resetar,
+    ]
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

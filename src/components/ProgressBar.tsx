@@ -11,7 +11,7 @@ export default function ProgressBar({ atual, total }: { atual: number; total: nu
         className="h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800"
       >
         <div
-          className="h-full rounded-full bg-indigo-600 transition-all duration-300"
+          className="h-full rounded-full bg-fuchsia-500 transition-all duration-300"
           style={{ width: `${pct}%` }}
         />
       </div>

@@ -13,11 +13,11 @@ import { PESO_VALOR } from "@/lib/labels";
 type Aba = "propostas" | "pros" | "contras" | "historico" | "fontes";
 
 const ABAS: { id: Aba; label: string }[] = [
-  { id: "propostas", label: "Propostas" },
-  { id: "pros", label: "Prós" },
-  { id: "contras", label: "Contras" },
-  { id: "historico", label: "Histórico" },
-  { id: "fontes", label: "Fontes" },
+  { id: "propostas", label: "📋 Propostas" },
+  { id: "pros", label: "👍 Prós" },
+  { id: "contras", label: "👎 Contras" },
+  { id: "historico", label: "🗂️ Histórico" },
+  { id: "fontes", label: "🔗 Fontes" },
 ];
 
 export default function CandidatoPage() {
@@ -39,7 +39,7 @@ export default function CandidatoPage() {
     return (
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-6 py-16 text-center">
         <p className="text-sm text-slate-600 dark:text-slate-300">Candidato não encontrado na base.</p>
-        <Link href="/" className="mt-4 text-sm font-semibold text-indigo-600 underline">
+        <Link href="/" className="mt-4 text-sm font-semibold text-fuchsia-600 underline">
           Voltar ao início
         </Link>
       </main>
@@ -63,7 +63,7 @@ export default function CandidatoPage() {
       <div className="mt-4 flex items-start gap-4">
         <div
           aria-hidden="true"
-          className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-slate-200 text-2xl font-bold text-slate-600 dark:bg-slate-700 dark:text-slate-200"
+          className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-200 to-violet-200 text-2xl font-bold text-fuchsia-800 dark:from-fuchsia-800 dark:to-violet-800 dark:text-fuchsia-100"
         >
           {candidato.nome_urna.charAt(0)}
         </div>
@@ -102,9 +102,9 @@ export default function CandidatoPage() {
       <p className="mt-2 text-[11px] text-slate-400">Atualizado em {candidato.ultima_verificacao}</p>
 
       {placarPessoal && (
-        <div className="mt-6 rounded-2xl border border-slate-900/10 bg-slate-50 p-4 dark:border-white/10 dark:bg-slate-900">
+        <div className="mt-6 rounded-2xl border-2 border-fuchsia-200 bg-fuchsia-50/60 p-4 dark:border-fuchsia-900 dark:bg-fuchsia-950/20">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Seu placar pessoal para {candidato.nome_urna}
+            ⭐ Seu placar pessoal para {candidato.nome_urna}
           </p>
           <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{placarPessoal.pct}%</p>
           <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -122,7 +122,7 @@ export default function CandidatoPage() {
             onClick={() => setAba(a.id)}
             className={`flex-shrink-0 border-b-2 px-3 py-2 text-sm font-semibold transition ${
               aba === a.id
-                ? "border-indigo-600 text-indigo-600 dark:text-indigo-400"
+                ? "border-fuchsia-600 text-fuchsia-600 dark:text-fuchsia-400"
                 : "border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400"
             }`}
           >
@@ -213,7 +213,7 @@ export default function CandidatoPage() {
               .filter((v, i, arr) => arr.indexOf(v) === i)
               .map((url) => (
                 <li key={url}>
-                  <a href={url} target="_blank" rel="noreferrer" className="break-all text-indigo-600 underline underline-offset-2 dark:text-indigo-400">
+                  <a href={url} target="_blank" rel="noreferrer" className="break-all text-fuchsia-600 underline underline-offset-2 dark:text-fuchsia-400">
                     {url}
                   </a>
                 </li>

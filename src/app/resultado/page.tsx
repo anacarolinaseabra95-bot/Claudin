@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import CandidateCard from "@/components/CandidateCard";
 import DirectiveSummary from "@/components/DirectiveSummary";
+import PartyCard from "@/components/PartyCard";
 import ProposalCard from "@/components/ProposalCard";
 import ThemeChips from "@/components/ThemeChips";
 import { CARGO_LABEL, TEMA_LABEL } from "@/lib/labels";
@@ -13,10 +14,12 @@ import {
   gerarResumoDiretivo,
   rankearCandidatos,
   rankearCausas,
+  rankearPartidos,
 } from "@/lib/matching";
 import { useStore } from "@/lib/store";
 import { candidatosPorCargo } from "@/data/candidatos";
-import { Cargo, Tema } from "@/lib/types";
+import { PARTIDOS } from "@/data/partidos";
+import { Cargo, NivelImportancia, Tema } from "@/lib/types";
 
 export default function ResultadoPage() {
   const router = useRouter();
@@ -34,20 +37,22 @@ export default function ResultadoPage() {
   if (!hidratado || !estado.questionarioConcluido) {
     return (
       <main className="mx-auto flex w-full max-w-md flex-1 items-center justify-center px-6 py-16">
-        <p className="text-sm text-slate-500">Carregando seu resultado…</p>
+        <p className="text-sm text-slate-500">Preparando seu resultado… 🔮</p>
       </main>
     );
   }
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-10 sm:px-6">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Seu resultado</h1>
+      <p className="text-4xl" aria-hidden="true">
+        🏆
+      </p>
+      <h1 className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">Seu resultado</h1>
       <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-        Causas mais importantes pra você, na ordem que você indicou:{" "}
-        {causasPrioritarias
-          .filter((c) => c.nivel === "muito")
-          .map((c) => TEMA_LABEL[c.tema])
-          .join(", ") || "nenhuma marcada como muito importante"}
+        As causas que mais importam pra você, na ordem que escolheu:{" "}
+        <strong>
+          {causasPrioritarias.map((c) => TEMA_LABEL[c.tema]).join(", ") || "nenhuma escolhida"}
+        </strong>
         .
       </p>
 
@@ -59,7 +64,7 @@ export default function ResultadoPage() {
 
       <div className="mt-14 rounded-2xl border border-slate-200 p-5 text-center dark:border-slate-800">
         <p className="text-sm text-slate-600 dark:text-slate-300">
-          Quer montar sua própria comparação, com qualquer candidato da base?
+          Quer montar sua própria comparação, com qualquer candidato da base? 🔍
         </p>
         <Link
           href="/comparar"
@@ -77,10 +82,11 @@ function SecaoCargo({
   causasPrioritarias,
 }: {
   cargo: Cargo;
-  causasPrioritarias: { tema: Tema; nivel: "pouco" | "medio" | "muito" }[];
+  causasPrioritarias: { tema: Tema; nivel: NivelImportancia }[];
 }) {
   const { estado } = useStore();
   const candidatos = candidatosPorCargo(cargo);
+  const ehLegislativo = cargo === "deputado_federal" || cargo === "deputado_estadual";
 
   const [temasAtivos, setTemasAtivos] = useState<Tema[]>(() =>
     causasPrioritarias.slice(0, 3).map((c) => c.tema)
@@ -90,24 +96,26 @@ function SecaoCargo({
     return (
       <section>
         <h2 className="text-lg font-bold text-slate-900 dark:text-white">{CARGO_LABEL[cargo]}</h2>
-        <div className="mt-4 rounded-2xl border border-dashed border-slate-300 p-5 text-sm text-slate-600 dark:border-slate-700 dark:text-slate-300">
-          <p>
-            Nossa base curada para este cargo ainda está em construção — são milhares de candidatos por SP,
-            e priorizamos titulares buscando reeleição e nomes de maior relevância mensurável (seção 2 da
-            nossa metodologia).
-          </p>
-          <p className="mt-2">
-            Não simulamos dados de candidatos que não pesquisamos.{" "}
-            <a
-              href="https://divulgacandcontas.tse.jus.br/"
-              target="_blank"
-              rel="noreferrer"
-              className="font-semibold underline underline-offset-2"
-            >
-              Busque o nome ou número do seu candidato diretamente no TSE.
-            </a>
-          </p>
-        </div>
+
+        {ehLegislativo ? (
+          <ResultadoPorPartido cargo={cargo} />
+        ) : (
+          <div className="mt-4 rounded-2xl border border-dashed border-slate-300 p-5 text-sm text-slate-600 dark:border-slate-700 dark:text-slate-300">
+            <p>
+              Ainda não temos candidatos suficientes pesquisados pra esse cargo — nunca inventamos dados.
+            </p>
+            <p className="mt-2">
+              <a
+                href="https://divulgacandcontas.tse.jus.br/"
+                target="_blank"
+                rel="noreferrer"
+                className="font-semibold underline underline-offset-2"
+              >
+                Busque o nome do seu candidato direto no TSE →
+              </a>
+            </p>
+          </div>
+        )}
       </section>
     );
   }
@@ -155,6 +163,7 @@ function SecaoCargo({
                 candidato={r.candidato}
                 afinidade={r.afinidadeGeral}
                 destaque={i < 3}
+                posicao={i + 1}
               />
             ))}
           </div>
@@ -162,11 +171,10 @@ function SecaoCargo({
           {temasDisponiveis.length > 0 && (
             <div className="mt-8">
               <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-                Comparar finalistas por causa
+                🔎 Comparar finalistas por causa
               </h3>
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Selecionado por padrão: as causas que mais importam pra você. Toque para adicionar ou tirar
-                temas.
+                Já vem selecionado o que mais importa pra você. Toque pra adicionar ou tirar temas.
               </p>
               <div className="mt-3">
                 <ThemeChips temas={temasDisponiveis} ativos={temasAtivos} onToggle={alternarTema} />
@@ -214,5 +222,53 @@ function SecaoCargo({
         </div>
       )}
     </section>
+  );
+}
+
+/**
+ * Resultado por partido: ainda não temos candidatos individuais suficientes
+ * pra Deputado, mas o Brasil usa voto proporcional — seu voto em alguém de um
+ * partido também ajuda a eleger outras pessoas do mesmo partido/coligação. Por
+ * isso, mostrar os partidos mais alinhados já é um resultado útil de verdade.
+ */
+function ResultadoPorPartido({ cargo }: { cargo: Cargo }) {
+  const { estado } = useStore();
+  const ranking = rankearPartidos(PARTIDOS, estado);
+  const top = ranking.slice(0, 4);
+
+  if (top.length === 0) {
+    return (
+      <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
+        Responda ao menos uma pergunta pra gente calcular seus partidos combinando. 🙂
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-4">
+      <div className="rounded-2xl bg-fuchsia-50 p-4 text-sm text-slate-700 dark:bg-fuchsia-950/20 dark:text-slate-200">
+        💡 Ainda não temos a ficha de cada candidato a{" "}
+        {cargo === "deputado_federal" ? "Deputado Federal" : "Deputado Estadual"} por SP — são milhares de
+        nomes. Mas no Brasil o voto pra esse cargo é <strong>proporcional</strong>: votar em alguém de um
+        partido também ajuda a eleger outras pessoas do mesmo partido. Então já é um baita passo saber{" "}
+        <strong>quais partidos combinam mais com você</strong> — aí é só procurar quem concorre por eles na
+        sua região.
+      </div>
+
+      <div className="mt-4 flex flex-col gap-3">
+        {top.map((r, i) => (
+          <PartyCard key={r.partido.sigla} partido={r.partido} afinidade={r.afinidadeGeral} destaque={i === 0} />
+        ))}
+      </div>
+
+      <a
+        href="https://divulgacandcontas.tse.jus.br/"
+        target="_blank"
+        rel="noreferrer"
+        className="mt-4 inline-block text-sm font-semibold text-fuchsia-700 underline underline-offset-2 dark:text-fuchsia-400"
+      >
+        Buscar candidatos desses partidos no TSE →
+      </a>
+    </div>
   );
 }
