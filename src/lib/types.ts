@@ -155,6 +155,7 @@ export const TEMAS_IMPORTANCIA: Tema[] = [
   "infraestrutura",
   "direitos_humanos",
   "protecao_animal",
+  "gestao_publica",
 ];
 
 /** ---------- Estado do usuário (local, nunca compartilhado) ---------- */
