@@ -20,8 +20,8 @@ export default function TemasPage() {
         Quais causas te interessam mais?
       </h1>
       <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-        Escolha quantas quiser. Só vamos fazer perguntas sobre os temas que você marcar — assim é mais
-        rápido e mais simples. 😊
+        Escolha quantas quiser. Isso não muda o tamanho do questionário — ele é completo pra dar um match
+        com critério de verdade — mas essas causas aparecem primeiro e pesam mais no seu resultado. 😊
       </p>
 
       <div className="mt-6 grid grid-cols-2 gap-3">

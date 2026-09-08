@@ -66,6 +66,17 @@ export type PosicaoEixos = Partial<Record<Eixo, number>>;
 
 export type StatusDados = "completo" | "parcial" | "somente_ficha";
 
+/**
+ * Campos demográficos — SEMPRE opcionais, autodeclarados/publicamente
+ * documentados, e usados SOMENTE como filtro de exibição pelo usuário.
+ * Nunca entram no cálculo de afinidade (algoritmo é 100% baseado em posições
+ * sobre políticas públicas — seção 8, item 5 da metodologia). Deixe em branco
+ * em vez de inferir/adivinhar quando não houver fonte pública clara.
+ */
+export type Genero = "mulher" | "homem" | "nao_binario";
+export type RacaCor = "branca" | "preta" | "parda" | "amarela" | "indigena";
+export type OrientacaoSexual = "heterossexual" | "lgbtqia+";
+
 export interface Candidato {
   id: string;
   nome_urna: string;
@@ -90,6 +101,10 @@ export interface Candidato {
   status_dados: StatusDados;
   nota_editorial?: string;
   buscando_reeleicao?: boolean;
+  /** Opcional, autodeclarado/documentado publicamente. Ver nota acima — nunca usado no matching. */
+  genero?: Genero;
+  raca_cor?: RacaCor;
+  orientacao_sexual?: OrientacaoSexual;
 }
 
 /** ---------- Questionário ---------- */

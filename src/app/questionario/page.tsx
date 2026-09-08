@@ -12,7 +12,10 @@ export default function QuestionarioPage() {
   const { estado, responder, concluirQuestionario, hidratado } = useStore();
   const [passo, setPasso] = useState(0);
 
-  const eixosAPerguntar = useMemo(() => {
+  // Todas as 20 perguntas são sempre feitas — dá o critério necessário pra um
+  // match de verdade. Os temas escolhidos em /temas não cortam perguntas,
+  // só decidem a ORDEM: as causas que você marcou aparecem primeiro.
+  const eixosPriorizados = useMemo(() => {
     const conjunto = new Set<string>();
     estado.temasEscolhidos.forEach((tema) => {
       (TEMA_PARA_EIXOS[tema] ?? []).forEach((eixo) => conjunto.add(eixo));
@@ -20,10 +23,10 @@ export default function QuestionarioPage() {
     return conjunto;
   }, [estado.temasEscolhidos]);
 
-  const perguntas = useMemo(
-    () => QUESTOES.filter((q) => eixosAPerguntar.has(q.eixo)),
-    [eixosAPerguntar]
-  );
+  const perguntas = useMemo(() => {
+    const prioridade = (eixo: string) => (eixosPriorizados.has(eixo) ? 0 : 1);
+    return [...QUESTOES].sort((a, b) => prioridade(a.eixo) - prioridade(b.eixo));
+  }, [eixosPriorizados]);
 
   useEffect(() => {
     if (!hidratado) return;

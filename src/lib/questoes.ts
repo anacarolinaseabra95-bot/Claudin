@@ -2,11 +2,16 @@ import { Questao } from "./types";
 
 /**
  * Perguntas em linguagem simples, do dia a dia — sem termos técnicos de
- * política (nada de "PEC", "STF", "maioridade penal", "escala 6x1"...).
- * Cada pergunta mostra duas situações opostas; a pessoa escolhe a que mais
- * combina com ela, ou "os dois, mais ou menos". A opção A representa sempre
- * o polo mínimo do eixo ideológico, e a opção B o polo máximo (lib/axes.ts) —
- * assim o cálculo de afinidade não precisa saber nada sobre o texto.
+ * política (nada de "PEC", "STF", "escala 6x1"...). Cada pergunta mostra
+ * duas situações opostas; a pessoa escolhe a que mais combina com ela, ou
+ * "os dois, mais ou menos". A opção A representa sempre o polo mínimo do
+ * eixo ideológico, e a opção B o polo máximo (lib/axes.ts) — assim o cálculo
+ * de afinidade não precisa saber nada sobre o texto.
+ *
+ * São 4 perguntas por eixo (20 no total) para dar profundidade e critério de
+ * verdade ao match — todas sempre respondidas, independente dos temas que a
+ * pessoa marcou como prioridade (esses só decidem a ORDEM das perguntas e o
+ * peso de cada causa no resultado, não quantas perguntas existem).
  */
 export const QUESTOES: Questao[] = [
   // ---- Emprego e economia ----
@@ -36,6 +41,32 @@ export const QUESTOES: Questao[] = [
       texto: "Trabalhadores terem mais proteções (jornada menor, mais direitos), mesmo custando mais pras empresas.",
     },
   },
+  {
+    id: "q_econ_3",
+    eixo: "economia",
+    pergunta: "Sobre ajudar quem ganha menos:",
+    opcaoA: {
+      emoji: "💪",
+      texto: "O foco deveria ser gerar mais empregos, não ampliar programas como o Bolsa Família.",
+    },
+    opcaoB: {
+      emoji: "🎁",
+      texto: "Programas como o Bolsa Família deveriam ser ampliados pra quem mais precisa.",
+    },
+  },
+  {
+    id: "q_econ_4",
+    eixo: "economia",
+    pergunta: "Sobre impostos pra quem tem mais dinheiro:",
+    opcaoA: {
+      emoji: "🤝",
+      texto: "Aumentar impostos sobre grandes fortunas e heranças afasta investimentos — é melhor não mexer.",
+    },
+    opcaoB: {
+      emoji: "🏦",
+      texto: "Quem tem mais riqueza deveria pagar impostos mais altos que quem tem menos.",
+    },
+  },
   // ---- Segurança ----
   {
     id: "q_seg_1",
@@ -61,6 +92,32 @@ export const QUESTOES: Questao[] = [
     opcaoB: {
       emoji: "⚖️",
       texto: "Em crimes muito graves, deveriam poder ser julgados como adultos.",
+    },
+  },
+  {
+    id: "q_seg_3",
+    eixo: "seguranca",
+    pergunta: "Sobre posse de arma de fogo:",
+    opcaoA: {
+      emoji: "🚫",
+      texto: "Dificultar o acesso da população a armas de fogo ajuda a reduzir a violência.",
+    },
+    opcaoB: {
+      emoji: "🔫",
+      texto: "Facilitar o acesso a armas de fogo pra pessoas de bem se defenderem.",
+    },
+  },
+  {
+    id: "q_seg_4",
+    eixo: "seguranca",
+    pergunta: "Sobre quem usa drogas:",
+    opcaoA: {
+      emoji: "⚕️",
+      texto: "Deveria ser tratado como uma questão de saúde, não de polícia.",
+    },
+    opcaoB: {
+      emoji: "🚔",
+      texto: "Usar e portar drogas deveria continuar sendo crime, com fiscalização rígida.",
     },
   },
   // ---- Direitos e diversidade ----
@@ -90,6 +147,32 @@ export const QUESTOES: Questao[] = [
       texto: "Esse assunto é da família, não deveria ser tratado na escola.",
     },
   },
+  {
+    id: "q_cost_3",
+    eixo: "costumes",
+    pergunta: "Sobre interromper uma gravidez:",
+    opcaoA: {
+      emoji: "🤰",
+      texto: "A mulher deveria poder decidir, com acesso seguro pelo sistema de saúde.",
+    },
+    opcaoB: {
+      emoji: "🚫",
+      texto: "Deveria continuar proibido, com exceções bem específicas em lei.",
+    },
+  },
+  {
+    id: "q_cost_4",
+    eixo: "costumes",
+    pergunta: "Sobre religião e as decisões do governo:",
+    opcaoA: {
+      emoji: "🕊️",
+      texto: "Estado e religião devem ficar bem separados nas leis e decisões de governo.",
+    },
+    opcaoB: {
+      emoji: "🙏",
+      texto: "Valores religiosos deveriam influenciar mais as leis e o governo.",
+    },
+  },
   // ---- Meio ambiente ----
   {
     id: "q_amb_1",
@@ -117,6 +200,32 @@ export const QUESTOES: Questao[] = [
       texto: "A fiscalização deveria ser bem mais rígida, mesmo que atrase projetos.",
     },
   },
+  {
+    id: "q_amb_3",
+    eixo: "meio_ambiente",
+    pergunta: "Sobre transporte nas cidades:",
+    opcaoA: {
+      emoji: "🚗",
+      texto: "Facilitar o uso de carro (mais vias, menos restrição) resolve melhor o dia a dia.",
+    },
+    opcaoB: {
+      emoji: "🚇",
+      texto: "Investir em ônibus, metrô e ciclovias resolve melhor o dia a dia.",
+    },
+  },
+  {
+    id: "q_amb_4",
+    eixo: "meio_ambiente",
+    pergunta: "Sobre terras pra plantar e criar gado:",
+    opcaoA: {
+      emoji: "🌾",
+      texto: "Liberar mais área pra agropecuária, mesmo perto de florestas, gera emprego e renda.",
+    },
+    opcaoB: {
+      emoji: "🌲",
+      texto: "Restringir a expansão da agropecuária pra proteger as florestas que restam.",
+    },
+  },
   // ---- Honestidade na política ----
   {
     id: "q_inst_1",
@@ -142,6 +251,32 @@ export const QUESTOES: Questao[] = [
     opcaoB: {
       emoji: "🚨",
       texto: "As punições deveriam ser bem mais rápidas e duras, mesmo mudando leis e tribunais.",
+    },
+  },
+  {
+    id: "q_inst_3",
+    eixo: "instituicoes",
+    pergunta: "Sobre quem pode doar dinheiro pra campanhas políticas:",
+    opcaoA: {
+      emoji: "🏢",
+      texto: "Empresas deveriam poder voltar a doar pra campanhas, como antes.",
+    },
+    opcaoB: {
+      emoji: "🙋",
+      texto: "Só pessoas físicas deveriam poder doar, com limites bem baixos.",
+    },
+  },
+  {
+    id: "q_inst_4",
+    eixo: "instituicoes",
+    pergunta: "Sobre o tamanho da política:",
+    opcaoA: {
+      emoji: "🪑",
+      texto: "O número atual de deputados e cargos políticos está adequado.",
+    },
+    opcaoB: {
+      emoji: "✂️",
+      texto: "Deveria ser reduzido o número de deputados e de cargos comissionados.",
     },
   },
 ];

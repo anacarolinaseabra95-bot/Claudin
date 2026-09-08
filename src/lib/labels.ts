@@ -1,4 +1,4 @@
-import { Cargo, NivelImportancia, PesoPessoal, Tema } from "./types";
+import { Cargo, Genero, NivelImportancia, OrientacaoSexual, PesoPessoal, RacaCor, Tema } from "./types";
 
 export const TEMA_LABEL: Record<Tema, string> = {
   economia: "Emprego e economia",
@@ -65,4 +65,23 @@ export const PESO_VALOR: Record<PesoPessoal, number> = {
   pesa_muito: 2,
   pesa_pouco: 1,
   nao_importa: 0,
+};
+
+export const GENERO_LABEL: Record<Genero, string> = {
+  mulher: "Mulher",
+  homem: "Homem",
+  nao_binario: "Não binário",
+};
+
+export const RACA_COR_LABEL: Record<RacaCor, string> = {
+  branca: "Branca",
+  preta: "Preta",
+  parda: "Parda",
+  amarela: "Amarela",
+  indigena: "Indígena",
+};
+
+export const ORIENTACAO_LABEL: Record<OrientacaoSexual, string> = {
+  heterossexual: "Heterossexual",
+  "lgbtqia+": "LGBTQIA+",
 };

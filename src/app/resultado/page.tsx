@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import CandidateCard from "@/components/CandidateCard";
 import DirectiveSummary from "@/components/DirectiveSummary";
+import FilterBar, { FILTROS_VAZIOS, FiltrosDemograficos, filtrosAtivos, passaFiltro } from "@/components/FilterBar";
 import PartyCard from "@/components/PartyCard";
 import ProposalCard from "@/components/ProposalCard";
 import ThemeChips from "@/components/ThemeChips";
@@ -91,6 +92,7 @@ function SecaoCargo({
   const [temasAtivos, setTemasAtivos] = useState<Tema[]>(() =>
     causasPrioritarias.slice(0, 3).map((c) => c.tema)
   );
+  const [filtros, setFiltros] = useState<FiltrosDemograficos>(FILTROS_VAZIOS);
 
   if (candidatos.length === 0) {
     return (
@@ -122,8 +124,11 @@ function SecaoCargo({
 
   const ranking = rankearCandidatos(candidatos, estado);
   const semDados = candidatosSemDadosSuficientes(candidatos, estado);
-  const resumo = gerarResumoDiretivo(ranking, causasPrioritarias);
-  const finalistas = ranking.slice(0, 3);
+  const rankingFiltrado = filtrosAtivos(filtros)
+    ? ranking.filter((r) => passaFiltro(r.candidato, filtros))
+    : ranking;
+  const resumo = gerarResumoDiretivo(rankingFiltrado, causasPrioritarias);
+  const finalistas = rankingFiltrado.slice(0, 3);
 
   const temasDisponiveis = Array.from(
     new Set(
@@ -150,23 +155,39 @@ function SecaoCargo({
         </p>
       ) : (
         <>
-          {resumo && (
-            <div className="mt-4">
-              <DirectiveSummary resumo={resumo} />
-            </div>
-          )}
-
-          <div className="mt-5 flex flex-col gap-2">
-            {ranking.map((r, i) => (
-              <CandidateCard
-                key={r.candidato.id}
-                candidato={r.candidato}
-                afinidade={r.afinidadeGeral}
-                destaque={i < 3}
-                posicao={i + 1}
-              />
-            ))}
+          <div className="mt-4">
+            <FilterBar
+              candidatos={ranking.map((r) => r.candidato)}
+              filtros={filtros}
+              onChange={setFiltros}
+            />
           </div>
+
+          {rankingFiltrado.length === 0 ? (
+            <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
+              Nenhum candidato bate com esse filtro. Tente tirar algum filtro. 🙂
+            </p>
+          ) : (
+            <>
+              {resumo && (
+                <div className="mt-4">
+                  <DirectiveSummary resumo={resumo} />
+                </div>
+              )}
+
+              <div className="mt-5 flex flex-col gap-2">
+                {rankingFiltrado.map((r, i) => (
+                  <CandidateCard
+                    key={r.candidato.id}
+                    candidato={r.candidato}
+                    afinidade={r.afinidadeGeral}
+                    destaque={i < 3}
+                    posicao={i + 1}
+                  />
+                ))}
+              </div>
+            </>
+          )}
 
           {temasDisponiveis.length > 0 && (
             <div className="mt-8">
@@ -221,6 +242,21 @@ function SecaoCargo({
           </div>
         </div>
       )}
+
+      {ehLegislativo && (
+        <div className="mt-8">
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+            🗳️ Outros partidos que também combinam
+          </h3>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Nossa base de candidatos ainda não cobre todo mundo. Como o voto pra esse cargo é proporcional,
+            olhar os partidos alinhados amplia suas opções pra além dos nomes acima.
+          </p>
+          <div className="mt-3">
+            <ResultadoPorPartido cargo={cargo} compacto />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -231,10 +267,10 @@ function SecaoCargo({
  * partido também ajuda a eleger outras pessoas do mesmo partido/coligação. Por
  * isso, mostrar os partidos mais alinhados já é um resultado útil de verdade.
  */
-function ResultadoPorPartido({ cargo }: { cargo: Cargo }) {
+function ResultadoPorPartido({ cargo, compacto = false }: { cargo: Cargo; compacto?: boolean }) {
   const { estado } = useStore();
   const ranking = rankearPartidos(PARTIDOS, estado);
-  const top = ranking.slice(0, 4);
+  const top = ranking.slice(0, compacto ? 3 : 4);
 
   if (top.length === 0) {
     return (
@@ -246,16 +282,18 @@ function ResultadoPorPartido({ cargo }: { cargo: Cargo }) {
 
   return (
     <div className="mt-4">
-      <div className="rounded-2xl bg-fuchsia-50 p-4 text-sm text-slate-700 dark:bg-fuchsia-950/20 dark:text-slate-200">
-        💡 Ainda não temos a ficha de cada candidato a{" "}
-        {cargo === "deputado_federal" ? "Deputado Federal" : "Deputado Estadual"} por SP — são milhares de
-        nomes. Mas no Brasil o voto pra esse cargo é <strong>proporcional</strong>: votar em alguém de um
-        partido também ajuda a eleger outras pessoas do mesmo partido. Então já é um baita passo saber{" "}
-        <strong>quais partidos combinam mais com você</strong> — aí é só procurar quem concorre por eles na
-        sua região.
-      </div>
+      {!compacto && (
+        <div className="rounded-2xl bg-fuchsia-50 p-4 text-sm text-slate-700 dark:bg-fuchsia-950/20 dark:text-slate-200">
+          💡 Ainda não temos a ficha de cada candidato a{" "}
+          {cargo === "deputado_federal" ? "Deputado Federal" : "Deputado Estadual"} por SP — são milhares de
+          nomes. Mas no Brasil o voto pra esse cargo é <strong>proporcional</strong>: votar em alguém de um
+          partido também ajuda a eleger outras pessoas do mesmo partido. Então já é um baita passo saber{" "}
+          <strong>quais partidos combinam mais com você</strong> — aí é só procurar quem concorre por eles na
+          sua região.
+        </div>
+      )}
 
-      <div className="mt-4 flex flex-col gap-3">
+      <div className={`flex flex-col gap-3 ${compacto ? "" : "mt-4"}`}>
         {top.map((r, i) => (
           <PartyCard key={r.partido.sigla} partido={r.partido} afinidade={r.afinidadeGeral} destaque={i === 0} />
         ))}
